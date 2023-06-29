@@ -27,6 +27,7 @@ module.exports.routes = {
   'get /search/fields' : 'SearchController.getSearchFields',
   'get /search/labels' : 'SearchController.getLabels',
   'post /search/count' : 'SearchController.searchCount',
+  'post /reportBug' : 'UserController.reportBug',
 
   'post /image/upload' : 'ImageController.uploadImage',
 
