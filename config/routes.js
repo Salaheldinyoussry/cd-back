@@ -40,11 +40,10 @@ module.exports.routes = {
   'post /import' : 'ImportController.importAll',
   'get /import/status' : 'ImportController.importStatus',
 
-
+  'get /post' : 'PostController.getPosts',
   'get /post/feed' : 'PostController.getFeed',
   'post /post/filter' : 'PostController.filterPosts',
   'post /post' : 'PostController.create',
-  'get /post' : 'PostController.getPosts',
   'post /post/star' : 'PostController.star',
   'post /post/comment' : 'PostController.comment',
   'get /post/comment' : 'PostController.getComments',
