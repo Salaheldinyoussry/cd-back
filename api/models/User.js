@@ -22,18 +22,32 @@ module.exports = {
 	        allowNull: false
 		},
 
+		job: {
+			type: 'string',
+			allowNull: true
+		},
 
 		phone: {
 			type: 'string',
 			allowNull: true
 		},
 
+		profileImage: {
+			type: 'string',
+			allowNull: true
+		},
+
+		coverImage: {
+			type: 'string',
+			allowNull: true
+		},
 
 		role :{
 			type: 'string',
 			isIn: ['admin', 'regular'],
             defaultsTo: 'regular'
 		},
+		
 		images :{
 			collection: 'Image',
 			via: 'userId'
@@ -41,8 +55,6 @@ module.exports = {
 		avatar :{
 			type :"string",
 			allowNull: true
-			
-			
 		}
 
 
