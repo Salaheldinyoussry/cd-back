@@ -2,26 +2,24 @@
 module.exports = {
 
     getFeed: async function(req, res) {
-      try{
+        try{
 
-        let limit = req.query.limit?req.query.limit:10
-        let skip = req.query.skip?req.query.skip:0
+            let limit = req.query.limit?req.query.limit:10
+            let skip = req.query.skip?req.query.skip:0
 
-        let posts = await Post.find({}).populate('userId').populate('comments').sort('createdAt DESC').limit(limit).skip(skip)
+            let posts = await Post.find({}).populate('userId').populate('comments').sort('createdAt DESC').limit(limit).skip(skip)
 
-        return res.json({ posts: posts });
-
-
-      
-        }catch(e){
+            return res.json({ posts: posts });
+        }
+        catch(e){
           return res.serverError(e);
         }
       
     },
+
     getPosts : async function(req, res) {
 
         try{
-
             let limit = req.query.limit?req.query.limit:10
             let skip = req.query.skip?req.query.skip:0
 
@@ -29,14 +27,38 @@ module.exports = {
 
             return res.json({ posts: posts });
 
-        }catch(e){
+        }
+        catch(e){
             return res.serverError(e);
         }
 
     },
 
+    filterPosts: async function(req, res) {
 
-    create : async function(req, res) {
+        try{
+            const query = req.body;
+            let limit = query.limit?query.limit:10
+            let skip = query.skip?query.skip:0
+            let posts;
+            console.log(query.filterType, query.searchFilter);
+            if(query.filterType === "description") {
+                posts = await Post.find({description: query.searchFilter}).populate('userId').populate('comments').sort('createdAt DESC').limit(limit).skip(skip)
+                //posts = await Post.find({description: {"$regex": new RegExp(query.searchFilter, 'i')}}).populate('userId').populate('comments').sort('createdAt DESC').limit(limit).skip(skip)
+            }
+            else if(query.filterType === "user") {
+                user = await User.findOne({name: query.searchFilter});
+                posts = await Post.find({userId: user.id}).populate('userId').populate('comments').sort('createdAt DESC').limit(limit).skip(skip)
+            }
+            return res.json({ posts: posts });
+        }
+        catch(e){
+            return res.serverError(e);
+        }
+
+    },
+
+    create: async function(req, res) {
         try{
     
             let description = req.body.description

@@ -23,17 +23,16 @@ module.exports.routes = {
 
   'post /login' : 'UserController.login',
   'post /signup' : 'UserController.signup',
+  'get /user' : 'UserController.get',
+  'post /edit' : 'UserController.edit',
+
   'get /firm/all' : 'FirmController.getAllFirmDetails',
   'get /search/fields' : 'SearchController.getSearchFields',
   'get /search/labels' : 'SearchController.getLabels',
   'post /search/count' : 'SearchController.searchCount',
 
   'post /image/upload' : 'ImageController.uploadImage',
-
   'get /image' : 'ImageController.getImages',
-
-  'get /user' : 'UserController.get',
-
 
   'post /search' : 'SearchController.search',
   'get /firm/filingdates' : 'FirmController.getFilingDates',
@@ -42,6 +41,7 @@ module.exports.routes = {
 
 
   'get /post/feed' : 'PostController.getFeed',
+  'post /post/filter' : 'PostController.filterPosts',
   'post /post' : 'PostController.create',
   'get /post' : 'PostController.getPosts',
   'post /post/star' : 'PostController.star',

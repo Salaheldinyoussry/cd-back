@@ -23,7 +23,6 @@ const JWT = require('jsonwebtoken')
 
 module.exports = {
 
-
 	login: function (req, res) {
 		sails.log.info('Entering function login in ' + CONTROLLER_NAME)
 
@@ -61,7 +60,7 @@ module.exports = {
         	// Generate a JWT token
 			// We are using a combination of static jwt secret from env vars and the hash of user password as JWT Secret
 			// This is done to make sure that the previously constructed tokens get invalidated if the user updates the password
-			let jwtSecret = process.env.JWT_SECRET + '-' + user.password
+			let jwtSecret = process.env.JWT_SECRET + '-' + user.password 
         	sails.log.info('Generating a JWT token')
 			let token = JWT.sign({userId: user.id}, jwtSecret)
 
@@ -69,10 +68,8 @@ module.exports = {
 			let response = {
 				userId: user.id,
 				role: user.role,
-				token:token
-				
+				token: token
 			}
-
 
             res.setHeader('set-cookie', [
                 '_ria=' + token + '; Max-Age=' + 3600*5 +  ';  SameSite=None;',
@@ -103,27 +100,85 @@ module.exports = {
 				return res.serverError(error)
 
 			}
-
 			return res.ok(record)
 		})
 
-
 	},
-	get : function (req, res) {
+
+	edit: async function (req, res) {
+		let newUser = req.body
+		console.log(newUser);
+
+		if(newUser.editType==="name") {
+			User.updateOne({id: newUser.id}).set({name: newUser.name}).exec(function (error, record) {
+				if(error) {
+					sails.log.error(error)
+					return res.serverError(error)
+				}
+				delete record.password
+	
+				return res.ok(record)
+			});
+		}
+		else if(newUser.editType==="email") {
+			User.updateOne({id: newUser.id}).set({email: newUser.email}).exec(function (error, record) {
+				if(error) {
+					sails.log.error(error)
+					return res.serverError(error)
+				}
+				delete record.password
+	
+				return res.ok(record)
+			});
+		}
+		else if(newUser.editType==="job") {
+			User.updateOne({id: newUser.id}).set({job: newUser.job}).exec(function (error, record) {
+				if(error) {
+					sails.log.error(error)
+					return res.serverError(error)
+				}
+				delete record.password
+	
+				return res.ok(record)
+			});
+		}
+		else if(newUser.editType==="phone") {
+			User.updateOne({id: newUser.id}).set({phone: newUser.phone}).exec(function (error, record) {
+				if(error) {
+					sails.log.error(error)
+					return res.serverError(error)
+				}
+				delete record.password
+	
+				return res.ok(record)
+			});
+		}
+		else if(newUser.editType==="profileImage") {
+			User.updateOne({id: newUser.id}).set({profileImage: newUser.profileImage}).exec(function (error, record) {
+				if(error) {
+					sails.log.error(error)
+					return res.serverError(error)
+				}
+				delete record.password
+	
+				return res.ok(record)
+			});
+		}
+	},
+
+	get: function(req, res) {
 		let userId = req.user.id
 
 		User.findOne({id: userId}).exec(function (error, record) {
 				
-			if(error){
+			if(error) {
 				sails.log.error(error)
 				return res.serverError(error)
-
 			}
 			delete record.password
 
 			return res.ok(record)
 		})
-
 	}
 
 
