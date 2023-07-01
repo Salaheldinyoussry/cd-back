@@ -4,10 +4,6 @@ module.exports = {
 
 	attributes: {
 
-		description: {
-			type: 'string'
-		},
-
 		userId: {
 			model: 'User'
 		},
@@ -18,7 +14,11 @@ module.exports = {
 
         image: {
             type : 'json'
-        }
+        },
+		
+		description: {
+			type: 'string'
+		}
 
 	},
 }

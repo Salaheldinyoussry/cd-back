@@ -95,6 +95,7 @@ module.exports = {
         }
 
 	},
+    
 	search: function (req, res) {
         sails.log.info('Entering function search in ' + CONTROLLER_NAME)
    

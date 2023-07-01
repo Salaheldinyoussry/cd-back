@@ -8,7 +8,6 @@ module.exports = {
             let skip = req.query.skip?req.query.skip:0
 
             let posts = await Post.find({}).populate('userId').populate('comments').sort('createdAt DESC').limit(limit).skip(skip)
-
             return res.json({ posts: posts });
         }
         catch(e){
@@ -17,8 +16,7 @@ module.exports = {
       
     },
 
-    getPosts : async function(req, res) {
-
+    getPosts: async function(req, res) {
         try{
             let limit = req.query.limit?req.query.limit:10
             let skip = req.query.skip?req.query.skip:0
@@ -26,12 +24,24 @@ module.exports = {
             let posts = await Post.find({userId: req.user.id}).populate('userId').populate('comments').sort('createdAt DESC').limit(limit).skip(skip)
 
             return res.json({ posts: posts });
-
         }
         catch(e){
             return res.serverError(e);
         }
+    },
 
+    getPostsX: async function(req, res) {
+        try{
+            let limit = req.body.limit?req.body.limit:10
+            let skip = req.body.skip?req.body.skip:0
+
+            let posts = await Post.find({userId: req.body.id}).populate('userId').populate('comments').sort('createdAt DESC').limit(limit).skip(skip)
+
+            return res.json({ posts: posts });
+        }
+        catch(e){
+            return res.serverError(e);
+        }
     },
 
     filterPosts: async function(req, res) {
@@ -73,45 +83,58 @@ module.exports = {
         }
     },
 
+    
     star: async function(req, res) {
         try{
             let star = req.body.star
             let postId = req.body.postId
 
-            if(star){
-                await Star.create({postId: postId, userId: req.user.id})
-                await Post.update({id: postId}).set({stars: req.body.stars+1})
-            }else{
+            if(star) {
+                await Star.create({postId: postId, userId: req.user.id});
+                await Post.update({id: postId}).set({stars: req.body.stars+1});
+
+                let post = await Post.findOne({ id: postId });
+                if(post.userId != req.user.id) {
+                    let user = await User.findOne({ id: req.user.id });
+                    let description = user.name + " starred your post";
+                    await Notification.create({ postOwnerId: post.userId, userId: req.user.id, postId: postId, 
+                                                image: user.avatar, description: description });
+                }
+            }
+            else {
                 await Star.destroy({postId: postId, userId: req.user.id})
                 await Post.update({id: postId}).set({stars: req.body.stars-1})
             }
 
             return res.ok({ success: true });
-
-        }catch(error){
-
+        }
+        catch(error) {
             return res.serverError(error);
-
         }
 
     },
 
     comment: async function(req, res) {
         try{
-            let comment = req.body.comment
-            let postId = req.body.postId
+            let comment = req.body.comment;
+            let postId = req.body.postId;
+            let rec = await Comment.create({ postId: postId, userId: req.user.id, text: comment }).fetch();
 
-            let rec = await Comment.create({postId: postId, userId: req.user.id, text: comment}).fetch()
-
-            return res.ok({ comment:rec });
-
-        }catch(error){
-
-            return res.serverError(error);
-
+            let post = await Post.findOne({ id: postId });
+            if(post.userId != req.user.id) {
+                let user = await User.findOne({ id: req.user.id });
+                let description = user.name + " commented on your post";
+                await Notification.create({ postOwnerId: post.userId, userId: req.user.id, postId: postId, 
+                                            image: user.avatar, description: description });
+            }
+            
+            return res.ok({ comment: rec });
         }
-
+        catch(error) {
+            return res.serverError(error);
+        }
     },
+
     getComments: async function(req, res) {
         try{
 
