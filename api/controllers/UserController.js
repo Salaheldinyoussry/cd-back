@@ -153,7 +153,28 @@ module.exports = {
 				return res.ok(record)
 			});
 		}
-		
+		else if(newUser.editType==="avatar") {
+			User.updateOne({id: newUser.id}).set({avatar: newUser.avatar}).exec(function (error, record) {
+				if(error) {
+					sails.log.error(error)
+					return res.serverError(error)
+				}
+				delete record.password
+	
+				return res.ok(record)
+			});
+		}
+		else if(newUser.editType==="cover") {
+			User.updateOne({id: newUser.id}).set({cover: newUser.cover}).exec(function (error, record) {
+				if(error) {
+					sails.log.error(error)
+					return res.serverError(error)
+				}
+				delete record.password
+	
+				return res.ok(record)
+			});
+		}
 	},
 
 	get: function(req, res) {

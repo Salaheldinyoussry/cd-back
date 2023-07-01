@@ -69,16 +69,15 @@ module.exports = {
     },
 
     create: async function(req, res) {
-        try{
-    
+        try {
             let description = req.body.description
             let images = req.body.images
     
             let post = await Post.create({description: description, images: images, userId: req.user.id}).fetch()
-    
+            console.log(post);
             return res.json({ post: post });    
-
-        }catch(e){
+        }
+        catch(e) {
             return res.serverError(e);
         }
     },

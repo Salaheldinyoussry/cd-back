@@ -12,20 +12,21 @@ module.exports = {
 			model: 'User'
 
 		},
+        
         images: {
             type : 'json'
         },
+
         comments: {
             collection : 'Comment',
             via: 'postId',
 
         },
+
         stars:{
             type: 'number',
             defaultsTo: 0
         }
-
-
 
 	},
 }

@@ -23,9 +23,6 @@ module.exports = {
 		sails.log.info('Entering function getSearchFileds in ' + CONTROLLER_NAME)
 
         try{
-
-
-
             const db =  User.getDatastore().manager;
 
             let schema = await db.collection('Schema').findOne({});
@@ -40,8 +37,8 @@ module.exports = {
             sails.log.info('Returning from getSearchFileds in ' + CONTROLLER_NAME)
             return res.ok(response)
 
-
-        }catch(err){
+        }
+        catch(err){
             sails.log.error(err)
             return res.serverError(SERVER_ERROR)
         }

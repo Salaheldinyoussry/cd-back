@@ -45,7 +45,7 @@ module.exports.routes = {
   'post /post/filter' : 'PostController.filterPosts',
   'post /post' : 'PostController.create',
   'get /post' : 'PostController.getPosts',
-  'post /post' : 'PostController.getPostsX',
+  'post /postX' : 'PostController.getPostsX',
   'post /post/star' : 'PostController.star',
   'post /post/comment' : 'PostController.comment',
   'get /post/comment' : 'PostController.getComments',
