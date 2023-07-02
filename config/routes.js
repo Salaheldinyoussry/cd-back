@@ -27,6 +27,7 @@ module.exports.routes = {
   'post /user' : 'UserController.getX',
   'post /edit' : 'UserController.edit',
   'get /notify' : 'UserController.getNotify',
+  'post /reportBug' : 'UserController.reportBug',
 
   'get /firm/all' : 'FirmController.getAllFirmDetails',
   'get /search/fields' : 'SearchController.getSearchFields',
@@ -45,7 +46,6 @@ module.exports.routes = {
   'post /post/filter' : 'PostController.filterPosts',
   'post /post' : 'PostController.create',
   'get /post' : 'PostController.getPosts',
-  'post /postX' : 'PostController.getPostsX',
   'post /post/star' : 'PostController.star',
   'post /post/comment' : 'PostController.comment',
   'get /post/comment' : 'PostController.getComments',

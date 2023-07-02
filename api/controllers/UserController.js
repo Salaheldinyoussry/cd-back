@@ -1,4 +1,3 @@
-
 //error messages
 const NECESSARY_PARAMETERS_MISSING_ERROR = {
 	error: true,
@@ -14,7 +13,8 @@ const INVALID_CREDENTIALS = {
 	message: 'Email or password is wrong'
 }
 
-const loginInputFields = ['email',	'password']
+const loginInputFields = ['email',	'password'];
+const reportBugFields = ['Title', 'Description'];
 
 const CONTROLLER_NAME = 'UserController'
 
@@ -216,6 +216,29 @@ module.exports = {
 			}
 
 			return res.ok(records)
+		})
+	},
+	
+	reportBug: function (req, res) {  
+		let report = req.body
+		console.log(report)
+		if(!report || !hasAllFields(report, reportBugFields)) {
+			sails.log.error('Neccesary parameter(s) are missing')
+			return res.badRequest(NECESSARY_PARAMETERS_MISSING_ERROR)	
+		}
+
+		BugReports
+		.create(report)
+		.fetch()
+		.exec(function (error, record) {
+
+			if(error){
+				sails.log.error(error)
+				return res.serverError(error)
+
+			}
+
+			return res.ok(record)
 		})
 	}
 };
