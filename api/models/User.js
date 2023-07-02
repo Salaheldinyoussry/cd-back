@@ -32,12 +32,12 @@ module.exports = {
 			allowNull: true
 		},
 
-		profileImage: {
-			type: 'string',
+		avatar :{
+			type :"string",
 			allowNull: true
 		},
-
-		coverImage: {
+		
+		cover: {
 			type: 'string',
 			allowNull: true
 		},
@@ -51,12 +51,7 @@ module.exports = {
 		images :{
 			collection: 'Image',
 			via: 'userId'
-		},
-		avatar :{
-			type :"string",
-			allowNull: true
 		}
-
 
 	},
 

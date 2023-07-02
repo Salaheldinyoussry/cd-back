@@ -62,7 +62,7 @@ module.exports = {
         	// Generate a JWT token
 			// We are using a combination of static jwt secret from env vars and the hash of user password as JWT Secret
 			// This is done to make sure that the previously constructed tokens get invalidated if the user updates the password
-			let jwtSecret = process.env.JWT_SECRET + '-' + user.password 
+			let jwtSecret = /*process.env.JWT_SECRET*/"testtest" + '-' + user.password 
         	sails.log.info('Generating a JWT token')
 			let token = JWT.sign({userId: user.id}, jwtSecret)
 
@@ -155,8 +155,19 @@ module.exports = {
 				return res.ok(record)
 			});
 		}
-		else if(newUser.editType==="profileImage") {
-			User.updateOne({id: newUser.id}).set({profileImage: newUser.profileImage}).exec(function (error, record) {
+		else if(newUser.editType==="avatar") {
+			User.updateOne({id: newUser.id}).set({avatar: newUser.avatar}).exec(function (error, record) {
+				if(error) {
+					sails.log.error(error)
+					return res.serverError(error)
+				}
+				delete record.password
+	
+				return res.ok(record)
+			});
+		}
+		else if(newUser.editType==="cover") {
+			User.updateOne({id: newUser.id}).set({cover: newUser.cover}).exec(function (error, record) {
 				if(error) {
 					sails.log.error(error)
 					return res.serverError(error)
@@ -172,7 +183,22 @@ module.exports = {
 		let userId = req.user.id
 
 		User.findOne({id: userId}).exec(function (error, record) {
-				
+			console.log(record);
+			if(error) {
+				sails.log.error(error)
+				return res.serverError(error)
+			}
+			delete record.password
+
+			return res.ok(record)
+		})
+	},
+
+	getX: function(req, res) {
+		let userId = req.body.id;
+		console.log("post", userId);
+		User.findOne({id: userId}).exec(function (error, record) {
+			console.log(record);
 			if(error) {
 				sails.log.error(error)
 				return res.serverError(error)
@@ -183,6 +209,7 @@ module.exports = {
 		})
 
 	},
+  
 	reportBug: function (req, res) {  
 		let report = req.body
 		console.log(report)
@@ -206,7 +233,17 @@ module.exports = {
 
 	}
 
+	getNotify: function(req, res) {
+		Notification.find({postOwnerId: req.user.id}).exec(function (error, records) {
+			if(error) {
+				console.log(records);
+				sails.log.error(error)
+				return res.serverError(error)
+			}
 
+			return res.ok(records)
+		})
+	}
 };
 
 // Check if all the fields in field list are present or not
