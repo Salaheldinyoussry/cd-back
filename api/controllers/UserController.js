@@ -16,6 +16,8 @@ const INVALID_CREDENTIALS = {
 
 const loginInputFields = ['email',	'password']
 
+const reportBugFields = ['Title', 'Description']
+
 const CONTROLLER_NAME = 'UserController'
 
 const JWT = require('jsonwebtoken')
@@ -205,7 +207,31 @@ module.exports = {
 
 			return res.ok(record)
 		})
+
 	},
+  
+	reportBug: function (req, res) {  
+		let report = req.body
+		console.log(report)
+		if(!report || !hasAllFields(report, reportBugFields)) {
+			sails.log.error('Neccesary parameter(s) are missing')
+			return res.badRequest(NECESSARY_PARAMETERS_MISSING_ERROR)	
+		}
+		BugReports
+		.create(report)
+		.fetch()
+		.exec(function (error, record) {
+	
+			if(error){
+				sails.log.error(error)
+				return res.serverError(error)
+
+			}
+
+			return res.ok(record)
+		})
+
+	}
 
 	getNotify: function(req, res) {
 		Notification.find({postOwnerId: req.user.id}).exec(function (error, records) {

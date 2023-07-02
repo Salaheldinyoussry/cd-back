@@ -8,7 +8,23 @@ module.exports = {
             let skip = req.query.skip?req.query.skip:0
 
             let posts = await Post.find({}).populate('userId').populate('comments').sort('createdAt DESC').limit(limit).skip(skip)
-            return res.json({ posts: posts });
+
+            let isStared = await Star.find({userId: req.user.id})
+            let Starset = new Set();
+            let postSet = new Set();
+            for(let i = 0; i < isStared.length; i++){
+                Starset.add(isStared[i].postId)
+            }
+
+            for(let i = 0; i < posts.length; i++){
+                postSet.add(posts[i].id)
+            }
+            
+            let staredPostsSet = Array.from(new Set([...postSet].filter(x => Starset.has(x))));
+            
+            return res.json({ posts: posts, stared : staredPostsSet});
+
+            //return res.json({ posts: posts });
         }
         catch(e){
           return res.serverError(e);
@@ -22,8 +38,21 @@ module.exports = {
             let skip = req.query.skip?req.query.skip:0
 
             let posts = await Post.find({userId: req.user.id}).populate('userId').populate('comments').sort('createdAt DESC').limit(limit).skip(skip)
+            let isStared = await Star.find({userId: req.user.id})
+            let Starset = new Set();
+            let postSet = new Set();
+            for(let i = 0; i < isStared.length; i++){
+                Starset.add(isStared[i].postId)
+            }
 
-            return res.json({ posts: posts });
+            for(let i = 0; i < posts.length; i++){
+                postSet.add(posts[i].id)
+            }
+            
+            let staredPostsSet = Array.from(new Set([...postSet].filter(x => Starset.has(x))));
+            
+            return res.json({ posts: posts, stared : staredPostsSet});
+
         }
         catch(e){
             return res.serverError(e);
@@ -40,6 +69,15 @@ module.exports = {
             return res.json({ posts: posts });
         }
         catch(e){
+            return res.serverError(e);
+        }
+    },
+    StarsPost : async function(req, res) {
+        try{
+            let isStared = await Star.find({userId: req.userId})
+            return res.json({ stars: isStared});
+
+        }catch(e){
             return res.serverError(e);
         }
     },
