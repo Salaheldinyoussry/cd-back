@@ -5,7 +5,7 @@ module.exports = {
 	attributes: {
 
 		Title: {
-            
+
 			type: 'string'
 		},
 
@@ -16,4 +16,5 @@ module.exports = {
 
 
 	},
+
 }

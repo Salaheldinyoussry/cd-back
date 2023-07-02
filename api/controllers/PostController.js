@@ -1,4 +1,3 @@
-
 module.exports = {
 
     getFeed: async function(req, res) {
@@ -36,37 +35,26 @@ module.exports = {
         try{
             let limit = req.query.limit?req.query.limit:10
             let skip = req.query.skip?req.query.skip:0
+            let userId = req.query.profileId?req.query.profileId:req.user.id
 
-            let posts = await Post.find({userId: req.user.id}).populate('userId').populate('comments').sort('createdAt DESC').limit(limit).skip(skip)
-            let isStared = await Star.find({userId: req.user.id})
+            let posts = await Post.find({userId: userId}).populate('userId').populate('comments').sort('createdAt DESC').limit(limit).skip(skip)
+            
+            let isStared = await Star.find({userId: userId})
             let Starset = new Set();
             let postSet = new Set();
-            for(let i = 0; i < isStared.length; i++){
+
+            for(let i = 0; i < isStared.length; i++) {
                 Starset.add(isStared[i].postId)
             }
 
-            for(let i = 0; i < posts.length; i++){
+            for(let i = 0; i < posts.length; i++) {
                 postSet.add(posts[i].id)
             }
-            
+
             let staredPostsSet = Array.from(new Set([...postSet].filter(x => Starset.has(x))));
-            
+
             return res.json({ posts: posts, stared : staredPostsSet});
-
-        }
-        catch(e){
-            return res.serverError(e);
-        }
-    },
-
-    getPostsX: async function(req, res) {
-        try{
-            let limit = req.body.limit?req.body.limit:10
-            let skip = req.body.skip?req.body.skip:0
-
-            let posts = await Post.find({userId: req.body.id}).populate('userId').populate('comments').sort('createdAt DESC').limit(limit).skip(skip)
-
-            return res.json({ posts: posts });
+            //return res.json({ posts: posts });
         }
         catch(e){
             return res.serverError(e);
@@ -187,10 +175,18 @@ module.exports = {
 
         }
 
+    },
+
+    StarsPost : async function(req, res) {
+        try{
+            let isStared = await Star.find({userId: req.userId})
+            return res.json({ stars: isStared});
+
+        }
+        catch(e) {
+            return res.serverError(e);
+        }
     }
-
-
-
   
   };
 
