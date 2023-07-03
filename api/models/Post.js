@@ -9,8 +9,8 @@ module.exports = {
 		},
 
 		userId: {
-			model: 'User'
-
+			model: 'User',
+            required: true
 		},
         
         images: {
@@ -26,7 +26,7 @@ module.exports = {
         stars:{
             type: 'number',
             defaultsTo: 0
-        }
-
+        },
+    
 	},
 }

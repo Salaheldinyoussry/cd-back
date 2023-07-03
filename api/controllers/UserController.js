@@ -16,11 +16,10 @@ const INVALID_CREDENTIALS = {
 const loginInputFields = ['email',	'password'];
 const reportBugFields = ['Title', 'Description'];
 
-const reportBugFields = ['Title', 'Description']
-
 const CONTROLLER_NAME = 'UserController'
 
-const JWT = require('jsonwebtoken')
+const JWT = require('jsonwebtoken');
+//const Follow = require('../models/Follow');
 
 
 module.exports = {
@@ -66,7 +65,6 @@ module.exports = {
         	sails.log.info('Generating a JWT token')
 			let token = JWT.sign({userId: user.id}, jwtSecret)
 
-
 			let response = {
 				userId: user.id,
 				role: user.role,
@@ -77,10 +75,30 @@ module.exports = {
                 '_ria=' + token + '; Max-Age=' + 3600*5 +  ';  SameSite=None;',
             ])
 
-
 			sails.log.info('Returning from login in ' + CONTROLLER_NAME)
 			return res.ok(response)	
         })		
+	},
+
+	logout: function (req, res) {
+		sails.log.info('Entering function logout in ' + CONTROLLER_NAME);
+
+		User
+    	.findOne({id: req.user.id})
+    	.exec(function(error, user) {
+
+			if(error) {
+	            sails.log.error(error)
+	            return res.serverError(SERVER_ERROR)
+	        }
+
+	        if(!user) {
+	            sails.log.error('No user found for this email');
+	            return res.badRequest(INVALID_CREDENTIALS)
+	        }
+
+			return res.ok({ success: true });	
+		})
 	},
 
 	signup: function (req, res) {
@@ -100,7 +118,6 @@ module.exports = {
 			if(error){
 				sails.log.error(error)
 				return res.serverError(error)
-
 			}
 			return res.ok(record)
 		})
@@ -112,7 +129,7 @@ module.exports = {
 		console.log(newUser);
 
 		if(newUser.editType==="name") {
-			User.updateOne({id: newUser.id}).set({name: newUser.name}).exec(function (error, record) {
+			User.updateOne({id: req.user.id}).set({name: newUser.name}).exec(function (error, record) {
 				if(error) {
 					sails.log.error(error)
 					return res.serverError(error)
@@ -123,7 +140,7 @@ module.exports = {
 			});
 		}
 		else if(newUser.editType==="email") {
-			User.updateOne({id: newUser.id}).set({email: newUser.email}).exec(function (error, record) {
+			User.updateOne({id: req.user.id}).set({email: newUser.email}).exec(function (error, record) {
 				if(error) {
 					sails.log.error(error)
 					return res.serverError(error)
@@ -134,7 +151,7 @@ module.exports = {
 			});
 		}
 		else if(newUser.editType==="job") {
-			User.updateOne({id: newUser.id}).set({job: newUser.job}).exec(function (error, record) {
+			User.updateOne({id: req.user.id}).set({job: newUser.job}).exec(function (error, record) {
 				if(error) {
 					sails.log.error(error)
 					return res.serverError(error)
@@ -145,7 +162,7 @@ module.exports = {
 			});
 		}
 		else if(newUser.editType==="phone") {
-			User.updateOne({id: newUser.id}).set({phone: newUser.phone}).exec(function (error, record) {
+			User.updateOne({id: req.user.id}).set({phone: newUser.phone}).exec(function (error, record) {
 				if(error) {
 					sails.log.error(error)
 					return res.serverError(error)
@@ -156,7 +173,7 @@ module.exports = {
 			});
 		}
 		else if(newUser.editType==="avatar") {
-			User.updateOne({id: newUser.id}).set({avatar: newUser.avatar}).exec(function (error, record) {
+			User.updateOne({id: req.user.id}).set({avatar: newUser.avatar}).exec(function (error, record) {
 				if(error) {
 					sails.log.error(error)
 					return res.serverError(error)
@@ -167,7 +184,7 @@ module.exports = {
 			});
 		}
 		else if(newUser.editType==="cover") {
-			User.updateOne({id: newUser.id}).set({cover: newUser.cover}).exec(function (error, record) {
+			User.updateOne({id: req.user.id}).set({cover: newUser.cover}).exec(function (error, record) {
 				if(error) {
 					sails.log.error(error)
 					return res.serverError(error)
@@ -180,9 +197,9 @@ module.exports = {
 	},
 
 	get: function(req, res) {
-		let userId = req.user.id
+		let userId = req.query.profileId?req.query.profileId:req.user.id;
 
-		User.findOne({id: userId}).exec(function (error, record) {
+		User.findOne({id: userId}).populate('followers').exec(function (error, record) {
 			console.log(record);
 			if(error) {
 				sails.log.error(error)
@@ -193,45 +210,6 @@ module.exports = {
 			return res.ok(record)
 		})
 	},
-
-	getX: function(req, res) {
-		let userId = req.body.id;
-		console.log("post", userId);
-		User.findOne({id: userId}).exec(function (error, record) {
-			console.log(record);
-			if(error) {
-				sails.log.error(error)
-				return res.serverError(error)
-			}
-			delete record.password
-
-			return res.ok(record)
-		})
-
-	},
-  
-	reportBug: function (req, res) {  
-		let report = req.body
-		console.log(report)
-		if(!report || !hasAllFields(report, reportBugFields)) {
-			sails.log.error('Neccesary parameter(s) are missing')
-			return res.badRequest(NECESSARY_PARAMETERS_MISSING_ERROR)	
-		}
-		BugReports
-		.create(report)
-		.fetch()
-		.exec(function (error, record) {
-	
-			if(error){
-				sails.log.error(error)
-				return res.serverError(error)
-
-			}
-
-			return res.ok(record)
-		})
-
-	}
 
 	getNotify: function(req, res) {
 		Notification.find({postOwnerId: req.user.id}).exec(function (error, records) {
@@ -266,6 +244,64 @@ module.exports = {
 
 			return res.ok(record)
 		})
+
+	},
+  
+	reportBug: function (req, res) {  
+		let report = req.body
+		console.log(report)
+		if(!report || !hasAllFields(report, reportBugFields)) {
+			sails.log.error('Neccesary parameter(s) are missing')
+			return res.badRequest(NECESSARY_PARAMETERS_MISSING_ERROR)	
+		}
+		BugReports
+		.create(report)
+		.fetch()
+		.exec(function (error, record) {
+	
+			if(error){
+				sails.log.error(error)
+				return res.serverError(error)
+
+			}
+
+			return res.ok(record)
+		})
+
+	}
+
+	follow: function (req, res) { 
+		let newRecord = { followerId: req.user.id, followeeId: req.body.followeeId };
+		Follow.findOne(newRecord).exec(function (error, record) {
+			if(error) {
+				sails.log.error(error)
+				return res.serverError(error)
+			}
+
+			if(!record) {
+				Follow.create(newRecord).fetch().exec(function (error, record) {
+					console.log(record);
+					if(error) {
+						sails.log.error(error)
+						return res.serverError(error)
+					}
+						
+					if(record) {
+						return res.ok({ success: true })
+					}
+				});
+			}
+			else {
+				return res.ok({ success: false })
+			}
+		});
+	},
+
+	unfollow: async function (req, res) { 
+		let record = { followerId: req.user.id, followeeId: req.body.followeeId };
+	    await Follow.destroy(record)
+
+		return res.ok({ success: true })
 	}
 };
 

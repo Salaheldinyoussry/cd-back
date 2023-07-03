@@ -51,6 +51,16 @@ module.exports = {
 		images :{
 			collection: 'Image',
 			via: 'userId'
+		},
+
+		followers: {
+			collection: 'Follow',
+			via: 'followeeId',
+		},
+
+		followees: {
+			collection: 'Follow',
+			via: 'followerId'
 		}
 
 	},
