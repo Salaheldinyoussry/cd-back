@@ -31,10 +31,12 @@ module.exports.routes = {
   'post /follow' : 'UserController.follow',
   'post /unfollow' : 'UserController.unfollow',
 
+
   'get /firm/all' : 'FirmController.getAllFirmDetails',
   'get /search/fields' : 'SearchController.getSearchFields',
   'get /search/labels' : 'SearchController.getLabels',
   'post /search/count' : 'SearchController.searchCount',
+  'post /reportBug' : 'UserController.reportBug',
 
   'post /image/upload' : 'ImageController.uploadImage',
   'get /image' : 'ImageController.getImages',
@@ -44,10 +46,12 @@ module.exports.routes = {
   'post /import' : 'ImportController.importAll',
   'get /import/status' : 'ImportController.importStatus',
 
+
   'get /post/feed' : 'PostController.getFeed',
   'post /post/filter' : 'PostController.filterPosts',
   'post /post' : 'PostController.create',
   'get /post' : 'PostController.getPosts',
+
   'post /post/star' : 'PostController.star',
   'post /post/comment' : 'PostController.comment',
   'get /post/comment' : 'PostController.getComments',
