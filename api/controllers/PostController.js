@@ -2,17 +2,24 @@ module.exports = {
 
     getFeed: async function(req, res) {
         try{
-
             let limit = req.query.limit?req.query.limit:10
             let skip = req.query.skip?req.query.skip:0
 
-            let posts = await Post.find({}).populate('userId').populate('comments').sort('createdAt DESC').limit(limit).skip(skip)
-            return res.json({ posts: posts });
+            let follow = await Follow.find({ followerId: req.user.id });
+            var allPosts = [];
+            for(let i=0; i<follow.length; i++) {
+                var posts = await Post.find({userId: follow[i].followeeId}).populate('userId').populate('comments')
+                                .sort('createdAt DESC').limit(limit).skip(skip);
+                allPosts.push(...posts);
+            }
+            var posts = await Post.find({}).populate('userId').populate('comments').sort('createdAt DESC').limit(limit).skip(skip);
+            allPosts.push(...posts);
+
+            return res.json({ posts: allPosts });
         }
-        catch(e){
+        catch(e) {
           return res.serverError(e);
         }
-      
     },
 
     getPosts: async function(req, res) {
@@ -38,7 +45,6 @@ module.exports = {
             let staredPostsSet = Array.from(new Set([...postSet].filter(x => Starset.has(x))));
 
             return res.json({ posts: posts, stared : staredPostsSet});
-            //return res.json({ posts: posts });
         }
         catch(e){
             return res.serverError(e);
@@ -46,7 +52,6 @@ module.exports = {
     },
 
     filterPosts: async function(req, res) {
-
         try{
             const query = req.body;
             let limit = query.limit?query.limit:10

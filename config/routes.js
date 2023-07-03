@@ -23,11 +23,13 @@ module.exports.routes = {
 
   'post /login' : 'UserController.login',
   'post /signup' : 'UserController.signup',
+  'get /logout' : 'UserController.logout',
   'get /user' : 'UserController.get',
-  'post /user' : 'UserController.getX',
   'post /edit' : 'UserController.edit',
   'get /notify' : 'UserController.getNotify',
   'post /reportBug' : 'UserController.reportBug',
+  'post /follow' : 'UserController.follow',
+  'post /unfollow' : 'UserController.unfollow',
 
   'get /firm/all' : 'FirmController.getAllFirmDetails',
   'get /search/fields' : 'SearchController.getSearchFields',
