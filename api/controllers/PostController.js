@@ -5,22 +5,33 @@ module.exports = {
             let limit = req.query.limit?req.query.limit:10
             let skip = req.query.skip?req.query.skip:0
 
+            // get posts from followed profiles
             let follow = await Follow.find({ followerId: req.user.id });
+            let followees = new Set();
             var allPosts = [];
             for(let i=0; i<follow.length; i++) {
+                followees.add(follow[i].followeeId);
                 var posts = await Post.find({userId: follow[i].followeeId}).populate('userId').populate('comments')
                                 .sort('createdAt DESC').limit(limit).skip(skip);
                 allPosts.push(...posts);
             }
+
+            // get some other random posts
             var posts = await Post.find({}).populate('userId').populate('comments').sort('createdAt DESC').limit(limit).skip(skip);
-            allPosts.push(...posts);
-
-
-
+            for(let i=0; i<limit; i++) {
+                if(posts[i]) {
+                    if(!followees.has(posts[i].userId.id)) {
+                        allPosts.push(posts[i]);
+                    }
+                }
+                else 
+                    break;
+            }
 
             let isStared = await Star.find({userId: req.user.id})
             let Starset = new Set();
             let postSet = new Set();
+              
             for(let i = 0; i < isStared.length; i++){
                 Starset.add(isStared[i].postId)
             }
@@ -31,7 +42,6 @@ module.exports = {
 
             let staredPostsSet = Array.from(new Set([...postSet].filter(x => Starset.has(x))));
             return res.json({ posts: allPosts, stared : staredPostsSet});
-
         }
         catch(e) {
           return res.serverError(e);
@@ -63,6 +73,31 @@ module.exports = {
             return res.json({ posts: posts, stared : staredPostsSet});
         }
         catch(e){
+            return res.serverError(e);
+        }
+    },
+
+    getPost: async function(req, res) {
+        try {
+            let posts = await Post.find({id: req.query.postId}).populate('userId').populate('comments');
+            
+            let isStared = await Star.find({userId: req.user.id});
+            let Starset = new Set();
+            let postSet = new Set();
+
+            for(let i=0; i<isStared.length; i++) {
+                Starset.add(isStared[i].postId);
+            }
+
+            for(let i=0; i<posts.length; i++) {
+                postSet.add(posts[i].id);
+            }
+
+            let staredPostsSet = Array.from(new Set([...postSet].filter(x => Starset.has(x))));
+
+            return res.json({ post: posts[0], stared: staredPostsSet});
+        }
+        catch(e) {
             return res.serverError(e);
         }
     },
@@ -104,6 +139,29 @@ module.exports = {
         }
     },
 
+    delete: async function(req, res) {
+        try {
+            let postId = req.body.postId;
+            await Post.destroy({ id: postId });
+            
+            return res.json({ success: true });    
+        }
+        catch(e) {
+            return res.serverError(e);
+        }
+    },
+
+    edit: async function(req, res) {
+        let post = req.body;
+        Post.updateOne({id: post.id}).set({description: post.description, images: post.images}).exec(function (error, record) {
+            if(error) {
+                sails.log.error(error)
+                return res.serverError(error)
+            }
+            console.log(record);
+            return res.ok(record)
+        });
+    },
     
     star: async function(req, res) {
         try{

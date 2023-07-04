@@ -246,29 +246,6 @@ module.exports = {
 		})
 
 	},
-  
-	reportBug: function (req, res) {  
-		let report = req.body
-		console.log(report)
-		if(!report || !hasAllFields(report, reportBugFields)) {
-			sails.log.error('Neccesary parameter(s) are missing')
-			return res.badRequest(NECESSARY_PARAMETERS_MISSING_ERROR)	
-		}
-		BugReports
-		.create(report)
-		.fetch()
-		.exec(function (error, record) {
-	
-			if(error){
-				sails.log.error(error)
-				return res.serverError(error)
-
-			}
-
-			return res.ok(record)
-		})
-
-	},
 
 	follow: function (req, res) { 
 		let newRecord = { followerId: req.user.id, followeeId: req.body.followeeId };

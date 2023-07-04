@@ -31,7 +31,6 @@ module.exports.routes = {
   'post /follow' : 'UserController.follow',
   'post /unfollow' : 'UserController.unfollow',
 
-
   'get /firm/all' : 'FirmController.getAllFirmDetails',
   'get /search/fields' : 'SearchController.getSearchFields',
   'get /search/labels' : 'SearchController.getLabels',
@@ -50,7 +49,10 @@ module.exports.routes = {
   'get /post/feed' : 'PostController.getFeed',
   'post /post/filter' : 'PostController.filterPosts',
   'post /post' : 'PostController.create',
+  'post /post/delete' : 'PostController.delete',
+  'post /post/edit' : 'PostController.edit',
   'get /post' : 'PostController.getPosts',
+  'get /post/notify' : 'PostController.getPost',
 
   'post /post/star' : 'PostController.star',
   'post /post/comment' : 'PostController.comment',
