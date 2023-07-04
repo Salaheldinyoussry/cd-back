@@ -28,7 +28,20 @@ module.exports = {
                     break;
             }
 
-            return res.json({ posts: allPosts });
+            let isStared = await Star.find({userId: req.user.id})
+            let Starset = new Set();
+            let postSet = new Set();
+              
+            for(let i = 0; i < isStared.length; i++){
+                Starset.add(isStared[i].postId)
+            }
+
+            for(let i = 0; i < allPosts.length; i++){
+                postSet.add(allPosts[i].id)
+            }
+
+            let staredPostsSet = Array.from(new Set([...postSet].filter(x => Starset.has(x))));
+            return res.json({ posts: allPosts, stared : staredPostsSet});
         }
         catch(e) {
           return res.serverError(e);
