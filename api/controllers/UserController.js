@@ -268,7 +268,7 @@ module.exports = {
 			return res.ok(record)
 		})
 
-	}
+	},
 
 	follow: function (req, res) { 
 		let newRecord = { followerId: req.user.id, followeeId: req.body.followeeId };
