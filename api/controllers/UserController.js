@@ -232,7 +232,7 @@ module.exports = {
 		}
 
 		BugReports
-		.create(report)
+		.create({userId: req.user.id, title: report.title, description: report.description})
 		.fetch()
 		.exec(function (error, record) {
 

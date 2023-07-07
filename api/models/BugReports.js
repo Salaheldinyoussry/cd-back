@@ -4,16 +4,17 @@ module.exports = {
 
 	attributes: {
 
-		Title: {
+		userId: {
+			model: 'User'
+		},
 
+		title: {
 			type: 'string'
 		},
 
-		Description: {
-
+		description: {
 			type: 'string'
 		}
-
 
 	},
 

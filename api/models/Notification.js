@@ -11,11 +11,6 @@ module.exports = {
         postId: {
 			model: 'Post'
 		},
-
-        image: {
-            type : 'json'
-        },
-		
 		description: {
 			type: 'string'
 		}

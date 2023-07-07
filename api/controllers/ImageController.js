@@ -23,7 +23,7 @@ module.exports = {
 
     getImages: async function(req, res) {
       // Get the userId from the request
-      const userId = req.user.Id;
+      const userId = req.user.id;
       try{
         let images =  await Image.find({userId: userId})
 
