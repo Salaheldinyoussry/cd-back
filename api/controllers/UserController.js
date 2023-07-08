@@ -14,7 +14,7 @@ const INVALID_CREDENTIALS = {
 }
 
 const loginInputFields = ['email',	'password'];
-const reportBugFields = ['Title', 'Description'];
+const reportBugFields = ['title', 'description'];
 
 const CONTROLLER_NAME = 'UserController'
 
