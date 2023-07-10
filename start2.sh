@@ -1,0 +1,1 @@
+JWT_SECRET=testtest CRYPTO_PASSWORD=testtest2 CRYPTO_SALT=testtest DB_URL=mongodb://localhost:27017/GenerativeAI nodemon --max_old_space_size=4096 app.js 
